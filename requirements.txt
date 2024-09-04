@@ -1,0 +1,12 @@
+#backend
+fastapi
+uvicorn
+pymilvus
+langchain_openai
+langchain_core
+pandas
+numpy
+tqdm
+torch
+transformers
+requests
