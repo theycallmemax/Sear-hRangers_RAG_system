@@ -1,9 +1,0 @@
-milvus:
-  host: localhost
-  port: 19530
-
-llama:
-  model_path: "/path/to/llama"
-
-ragas:
-  metrics: ["faithfulness", "correctness", "precision"]

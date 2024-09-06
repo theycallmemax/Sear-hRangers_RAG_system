@@ -1,13 +1,26 @@
-from fastapi import FastAPI
-from app.api.v1.endpoints import retrieval, generation, evaluation
+import os
+from dotenv import load_dotenv
+load_dotenv()
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from app.api.v1 import api_v1_router
+import asyncio
+import uvicorn
 
 app = FastAPI()
 
-# Подключаем маршруты
-app.include_router(retrieval.router, prefix="/api/v1/retrieval", tags=["retrieval"])
-app.include_router(generation.router, prefix="/api/v1/generation", tags=["generation"])
-app.include_router(evaluation.router, prefix="/api/v1/evaluation", tags=["evaluation"])
+app.include_router(api_v1_router, prefix="/api/v1")
 
-@app.get("/")
-def read_root():
-    return {"message": "Привет"}
+# Подключаем шаблоны для веб-интерфейса
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+
+if __name__ == "__main__":
+    asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())  # Явное указание использования asyncio loop
+    uvicorn.run("app.main:app", reload=True)
