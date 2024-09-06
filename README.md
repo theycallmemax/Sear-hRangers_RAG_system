@@ -33,7 +33,7 @@
 1. Запустите FastAPI сервер:
 
     ```bash
-    uvicorn app.main:app --reload
+    uvicorn app.main:app --reload --loop asyncio
     ```
 
 2. Запустите Streamlit интерфейс:
