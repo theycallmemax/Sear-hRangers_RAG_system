@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalAI Question Interface</title>
+</head>
+<body>
+    <h1>LegalAI Question Interface</h1>
+    <form id="question-form">
+        <label for="question">Введите вопрос:</label><br><br>
+        <textarea id="question" name="question" rows="4" cols="50"></textarea><br><br>
+        <input type="submit" value="Отправить">
+    </form>
+
+    <h2>Ответ:</h2>
+    <p id="answer"></p>
+
+    <script>
+        document.getElementById('question-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const question = document.getElementById('question').value;
+        
+            // Отправляем запрос для генерации ответа
+            const responseGeneration = await fetch('/generation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question: question }),
+            });
+        
+            // Parse the response as JSON
+            const dataGeneration = await responseGeneration.json();
+        
+            // Check if the response contains the answer field and update the page
+            if (dataGeneration.answer) {
+                document.getElementById('answer').textContent = dataGeneration.answer;
+            } else {
+                document.getElementById('answer').textContent = 'Ошибка: не удалось получить ответ.';
+            }
+        });
+        </script>
+        
+</body>
+</html>
