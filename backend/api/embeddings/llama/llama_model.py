@@ -57,4 +57,3 @@ def generate_with_llama(context, system_prompt, question, max_tokens=4096, tempe
     except Exception as e:
         logger.error(f"Ошибка при генерации текста: {str(e)}")
         return "Ошибка при генерации текста"
-

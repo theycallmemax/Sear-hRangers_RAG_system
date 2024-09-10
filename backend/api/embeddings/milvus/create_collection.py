@@ -1,6 +1,5 @@
 from api.embeddings.prompts import system_prompt, question_1
 from api.embeddings.embeddings_utils import *
-from api.embeddings.milvus.milvus_config import client
 from api.embeddings.llama.llama_model import llama
 import logging
 
@@ -9,8 +8,13 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def creating_collection(data_path, collection_name, token):
+def creating_collection(data_path, collection_name, client):
     try:
+        # Проверяем наличие коллекции
+        if client.has_collection(collection_name):
+            logger.info(f"Коллекция '{collection_name}' уже существует, создание пропущено.")
+            return 'Коллекция уже существует'
+        
         # Вытаскиваем акты
         logger.info(f"Начало чтения файла: {data_path}")
         with open(data_path, encoding='utf8') as file:
