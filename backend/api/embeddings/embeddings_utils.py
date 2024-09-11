@@ -12,6 +12,7 @@ def average_pool(last_hidden_states: Tensor, attention_mask: Tensor) -> Tensor:
 
 
 def make_embedding(input_texts, model, tokenizer):
+    # TODO ДОБАВИТЬ ВО ВСЕ ФУНУЦИИ ОПИСАНИЕ И ТИПЫ НА ВХОД И ВЫХОД docstring
     try:
         logger.info(f"Начало создания эмбеддингов для {len(input_texts)} текстов")
         batch_dict = tokenizer(

@@ -1,7 +1,8 @@
-from api.embeddings.make_request import make_request
 from fastapi import APIRouter, HTTPException
 from logger import logger
 from pydantic import BaseModel
+
+from api.embeddings.make_request import make_request
 
 # Создаем роутер для генерации ответов
 generation_router = APIRouter()
@@ -17,6 +18,7 @@ class Query(BaseModel):
 async def generate_answer_api(query: Query):
     """
     Генерация ответа на вопрос.
+
 
     Этот эндпоинт принимает запрос с вопросом и возвращает сгенерированный ответ,
     основанный на контексте, извлеченном из базы данных.

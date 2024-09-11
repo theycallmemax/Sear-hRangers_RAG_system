@@ -26,8 +26,10 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
+
 if __name__ == "__main__":
     asyncio.set_event_loop_policy(
         asyncio.DefaultEventLoopPolicy()
     )  # Явное указание использования asyncio loop
     uvicorn.run("app.main:app", reload=True)
+

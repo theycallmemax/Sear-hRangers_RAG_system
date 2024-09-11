@@ -17,6 +17,7 @@ def generate_with_llama(
     """
     Генерация текста с использованием LlamaAPI на основе предоставленного контекста, системного сообщения и вопроса.
 
+
     Аргументы:
         context (str): Контекст, который должен быть использован для ответа.
         system_prompt (str): Системное сообщение для Llama API.
@@ -52,6 +53,8 @@ def generate_with_llama(
 
         # Возвращаем сгенерированный текст
         logger.info("Ответ успешно сгенерирован.")
+        return response_data["choices"][0]["message"]["content"]
+
         return response_data["choices"][0]["message"]["content"]
 
     except Exception as e:

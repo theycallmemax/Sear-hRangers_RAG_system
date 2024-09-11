@@ -1,4 +1,9 @@
-from api.embeddings.embeddings_utils import *
+from api.embeddings.embeddings import model, tokenizer
+from api.embeddings.embeddings_utils import (
+    converting_data,
+    make_embedding,
+    make_summary,
+)
 from api.embeddings.llama.llama_model import llama
 from api.embeddings.prompts import question_1, system_prompt
 from logger import logger
@@ -55,6 +60,7 @@ def creating_collection(data_path, collection_name, client):
         logger.info(f"Коллекция '{collection_name}' успешно создана и данные добавлены")
 
         return "Коллекция создана"
+
     except Exception as e:
         logger.error(f"Ошибка при создании коллекции: {str(e)}")
         raise e

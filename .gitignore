@@ -166,3 +166,4 @@ standalone_embed.sh
 user.yaml
 volumes/
 .vscode/
+.vscode
