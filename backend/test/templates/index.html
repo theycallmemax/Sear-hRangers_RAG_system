@@ -16,31 +16,10 @@
     <h2>Ответ:</h2>
     <p id="answer"></p>
 
-    <script>
-        document.getElementById('question-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const question = document.getElementById('question').value;
-        
-            // Отправляем запрос для генерации ответа
-            const responseGeneration = await fetch('/generation', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ question: question }),
-            });
-        
-            // Parse the response as JSON
-            const dataGeneration = await responseGeneration.json();
-        
-            // Check if the response contains the answer field and update the page
-            if (dataGeneration.answer) {
-                document.getElementById('answer').textContent = dataGeneration.answer;
-            } else {
-                document.getElementById('answer').textContent = 'Ошибка: не удалось получить ответ.';
-            }
-        });
-        </script>
-        
+    <h2>Акты:</h2>
+    <p id="acts"></p>
+
+
+    <script src="static/js/scripts.js"></script>          
 </body>
 </html>

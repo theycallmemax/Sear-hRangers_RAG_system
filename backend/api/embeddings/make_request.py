@@ -38,12 +38,14 @@ def make_request(query):
             output_fields=["summary"],  # Возвращаем текстовое поле
         )
         logger.info(f"Поиск завершен. Найдено {len(search_res[0])} результатов")
-
+        logger.info(f"ВАЖНЕЙШАЯ ХУЙНЯ  {search_res[0]}")
         # Извлечение актов для ответа
         acts_for_answer = "\n\n".join(
             [res["entity"]["summary"] for res in search_res[0]]
         )
         logger.info("Акты для ответа сформированы")
+
+        acts = [res["entity"]["summary"] for res in search_res[0]]
 
         # Генерация ответа с использованием Llama
         logger.info("Генерация ответа с использованием Llama на основе контекста")
@@ -56,8 +58,8 @@ def make_request(query):
             quary=query,
         )
         logger.info(f"Ответ успешно сгенерирован: {answer}")
-
-        return answer
+        logger.info(f"АКТЫ ДЛЯ ОТВЕТА: {acts}")
+        return answer, acts
 
     except Exception as e:
         logger.error(f"Ошибка при обработке запроса: {str(e)}")

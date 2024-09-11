@@ -27,13 +27,12 @@ async def generate_answer_api(query: Query):
         logger.info(f"Запрос на генерацию ответа для вопроса: { query.question }")
 
         # Генерация ответа с использованием make_request
-        answer = make_request(query.question)
+        answer, acts = make_request(query.question)
 
         logger.info(
             f"Ответ: '{answer}' успешно сгенерирован для вопроса: {query.question}"
         )
-
-        return {"question": query.question, "answer": answer}
+        return {"response": answer, "acts": acts}
 
     except Exception as e:
         # Логируем и возвращаем ошибку с подробностями
