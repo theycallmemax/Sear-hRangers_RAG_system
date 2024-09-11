@@ -8,6 +8,7 @@ from api.endpoints import generation_router
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from logger import logger
 
 app = FastAPI()
@@ -17,6 +18,7 @@ app.include_router(generation_router, prefix="/generation", tags=["Generation"])
 
 # Подключаем шаблоны для веб-интерфейса
 templates = Jinja2Templates(directory="test/templates")
+app.mount("/static", StaticFiles(directory="test/static"), name="static")
 
 
 # Рендеринг главной страницы
