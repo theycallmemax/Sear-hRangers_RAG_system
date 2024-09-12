@@ -167,3 +167,4 @@ user.yaml
 volumes/
 .vscode/
 .vscode
+hf_models/

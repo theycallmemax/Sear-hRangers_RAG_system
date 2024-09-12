@@ -1,6 +1,6 @@
 import os
 
-from api.embeddings.embeddings import model, tokenizer
+# from api.embeddings.embeddings import model, tokenizer
 from api.embeddings.embeddings_utils import (
     converting_data,
     make_embedding,
@@ -21,13 +21,18 @@ from logger import logger
 logger.info("Import HuggingFaceEmbeddings")
 from langchain_huggingface import HuggingFaceEmbeddings
 
+
+# Укажите директорию для кеша
+cache_dir = "/root/.cache/hf_models"
+
 # huggingface embedding model
 logger.info("Init HuggingFaceEmbeddings(model_name='BAAI/bge-m3')")
 model_name = "BAAI/bge-m3"
 model_kwargs = {"device": "cpu"}
 encode_kwargs = {"normalize_embeddings": False}
+cache_folder = cache_dir
 embeddings = HuggingFaceEmbeddings(
-    model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
+    model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs, cache_folder=cache_folder
 )
 logger.info("Embeddings init complete")
 
@@ -77,58 +82,58 @@ acts = [Document(doc) for doc in acts if doc]
 retriever.add_documents(acts)
 
 
-def creating_collection(data_path, collection_name, client):
-    try:
-        # Проверяем наличие коллекции
-        if client.has_collection(collection_name):
-            logger.info(
-                f"Коллекция '{collection_name}' уже существует, создание пропущено."
-            )
-            return "Коллекция уже существует"
+# def creating_collection(data_path, collection_name, client):
+#     try:
+#         # Проверяем наличие коллекции
+#         if client.has_collection(collection_name):
+#             logger.info(
+#                 f"Коллекция '{collection_name}' уже существует, создание пропущено."
+#             )
+#             return "Коллекция уже существует"
 
-        # Вытаскиваем акты
-        logger.info(f"Начало чтения файла: {data_path}")
-        with open(data_path, encoding="utf8") as file:
-            txt = file.read()
+#         # Вытаскиваем акты
+#         logger.info(f"Начало чтения файла: {data_path}")
+#         with open(data_path, encoding="utf8") as file:
+#             txt = file.read()
 
-        acts = txt.split("\n")
-        acts = [doc for doc in acts if doc]
-        logger.info(f"Файл прочитан, количество документов: {len(acts)}")
+#         acts = txt.split("\n")
+#         acts = [doc for doc in acts if doc]
+#         logger.info(f"Файл прочитан, количество документов: {len(acts)}")
 
-        # Делаем суммаризацию нормативных актов
-        logger.info(f"Начало суммаризации первых {len(acts[:10])} документов")
-        summarys = make_summary(acts[:10], llama, system_prompt, question_1)
-        logger.info(f"Суммаризация завершена. Количество суммаризаций: {len(summarys)}")
+#         # Делаем суммаризацию нормативных актов
+#         logger.info(f"Начало суммаризации первых {len(acts[:10])} документов")
+#         summarys = make_summary(acts[:10], llama, system_prompt, question_1)
+#         logger.info(f"Суммаризация завершена. Количество суммаризаций: {len(summarys)}")
 
-        # Генерация эмбеддингов
-        logger.info(f"Начало генерации эмбеддингов для {len(summarys)} суммаризаций")
-        embeddings = make_embedding(summarys, model, tokenizer)
-        embedding_dim = len(embeddings[0])
-        logger.info(
-            f"Эмбеддинги сгенерированы. Размерность эмбеддингов: {embedding_dim}"
-        )
+#         # Генерация эмбеддингов
+#         logger.info(f"Начало генерации эмбеддингов для {len(summarys)} суммаризаций")
+#         embeddings = make_embedding(summarys, model, tokenizer)
+#         embedding_dim = len(embeddings[0])
+#         logger.info(
+#             f"Эмбеддинги сгенерированы. Размерность эмбеддингов: {embedding_dim}"
+#         )
 
-        # Преобразование данных для вставки в коллекцию
-        logger.info("Преобразование данных для вставки в Milvus")
-        insert_data = converting_data(embeddings, summarys, acts)
+#         # Преобразование данных для вставки в коллекцию
+#         logger.info("Преобразование данных для вставки в Milvus")
+#         insert_data = converting_data(embeddings, summarys, acts)
 
-        # Создание коллекции данных в Milvus
-        logger.info(
-            f"Создание коллекции '{collection_name}' с размерностью {embedding_dim}"
-        )
-        client.create_collection(
-            collection_name=collection_name,
-            dimension=embedding_dim,
-            metric_type="COSINE",  # Inner product distance
-        )
+#         # Создание коллекции данных в Milvus
+#         logger.info(
+#             f"Создание коллекции '{collection_name}' с размерностью {embedding_dim}"
+#         )
+#         client.create_collection(
+#             collection_name=collection_name,
+#             dimension=embedding_dim,
+#             metric_type="COSINE",  # Inner product distance
+#         )
 
-        # Вставка данных в коллекцию
-        logger.info(f"Вставка данных в коллекцию '{collection_name}'")
-        client.insert(collection_name=collection_name, data=insert_data)
-        logger.info(f"Коллекция '{collection_name}' успешно создана и данные добавлены")
+#         # Вставка данных в коллекцию
+#         logger.info(f"Вставка данных в коллекцию '{collection_name}'")
+#         client.insert(collection_name=collection_name, data=insert_data)
+#         logger.info(f"Коллекция '{collection_name}' успешно создана и данные добавлены")
 
-        return "Коллекция создана"
+#         return "Коллекция создана"
 
-    except Exception as e:
-        logger.error(f"Ошибка при создании коллекции: {str(e)}")
-        raise e
+#     except Exception as e:
+#         logger.error(f"Ошибка при создании коллекции: {str(e)}")
+#         raise e
