@@ -11,52 +11,55 @@ if not llama_api_token:
 llama = LlamaAPI(llama_api_token)
 
 
-def generate_with_llama(
-    context, system_prompt, question, max_tokens=4096, temperature=0.1, quary=""
-) -> str:
+def generate_with_llama(context: str, question: str, system_prompt, quary, max_tokens, temperature) -> str:
     """
     Генерация текста с использованием LlamaAPI на основе предоставленного контекста, системного сообщения и вопроса.
 
 
     Аргументы:
         context (str): Контекст, который должен быть использован для ответа.
-        system_prompt (str): Системное сообщение для Llama API.
         question (str): Вопрос пользователя, на который нужно ответить.
-        max_tokens (int): Максимальное количество токенов (по умолчанию 4096).
-        temperature (float): Параметр температуры для контроля случайности (по умолчанию 0.1).
-        quary (str): Дополнительный запрос для форматирования (по умолчанию '').
+        query (str): Дополнительный запрос для форматирования (по умолчанию '').
 
     Возвращает:
         str: Сгенерированный текст ответа.
     """
     logger.info("Отправка запроса к LlamaAPI...")
+    models = ["llama3.1-405b", "llama3.1-70b", "llama3.1-8b"]
 
-    # Формируем запрос к Llama API
-    api_request_json = {
-        "model": "llama3.1-8b",
-        "max_tokens": max_tokens,
-        "temperature": temperature,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": question.format(context=context, quary=quary)},
-        ],
-    }
+    # Обрабатываем каждую модель по очереди
+    for model in models:
+        # Формируем запрос к Llama API
+        api_request_json = {
+            "model": model,
+            "max_tokens": os.getenv("MAX_TOKENS"),
+            "temperature": os.getenv("TEMPERATURE"),
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {
+                    "role": "user",
+                    "content": question.format(context=context, query=quary),
+                },
+            ],
+        }
 
-    try:
-        # Выполнение запроса к LlamaAPI
-        response = llama.run(api_request_json)
-        response_data = response.json()
+        try:
+            # Выполнение запроса к LlamaAPI
+            response = llama.run(api_request_json)
+            response_data = response.json()
 
-        if "error" in response_data:
-            logger.error(f"Ошибка в ответе LlamaAPI: {response_data['error']}")
-            return f"Ошибка: {response_data['error']}"
+            if "error" in response_data:
+                logger.error(f"Ошибка в ответе LlamaAPI: {response_data['error']}")
+                continue  # Переходим к следующей модели
 
-        # Возвращаем сгенерированный текст
-        logger.info("Ответ успешно сгенерирован.")
-        return response_data["choices"][0]["message"]["content"]
+            # Возвращаем сгенерированный текст
+            logger.info("Ответ успешно сгенерирован.")
+            return response_data["choices"][0]["message"]["content"]
 
-        return response_data["choices"][0]["message"]["content"]
+        except Exception as req_err:
+            # Логируем ошибку и пробуем следующую модель
+            logger.error(f"Ошибка с моделью {model}: {req_err}")
+            continue
 
-    except Exception as e:
-        logger.error(f"Ошибка при генерации текста: {str(e)}")
-        return "Ошибка при генерации текста"
+    # Если все модели не удались, возвращаем сообщение об ошибке
+    return "Не удалось сгенерировать ответ ни одной из моделей."

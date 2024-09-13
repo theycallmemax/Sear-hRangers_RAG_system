@@ -26,6 +26,8 @@ services:
     volumes:
       - ./storage:/storage
       - ~/.ssh:/root/.ssh
+      - ./hf_models:/root/.cache/hf_models
+
     depends_on:
       - standalone
     healthcheck:
