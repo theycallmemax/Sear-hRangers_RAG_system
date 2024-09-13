@@ -5,6 +5,7 @@ import asyncio
 
 import uvicorn
 from api.endpoints import generation_router
+from api.endpoints import document_router
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -15,6 +16,9 @@ app = FastAPI()
 
 # Подключаем роутер для генерации
 app.include_router(generation_router, prefix="/generation", tags=["Generation"])
+
+# Подключаем роутер для загрузки документов
+app.include_router(document_router, prefix="/documents", tags=["Documents"])
 
 # Подключаем шаблоны для веб-интерфейса
 templates = Jinja2Templates(directory="test/templates")
