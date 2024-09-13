@@ -24,8 +24,10 @@ def extract_title(document: str) -> str:
             date = potential_date
             break
 
+    # Если дата не найдена, вернуть первые три слова и многоточие
     if not date:
-        return "Дата не найдена"
+        first_three_words = " ".join(document.split()[:3])  # Берём первые три слова
+        return f"{first_three_words}..."  # Добавляем многоточие
 
     # Поиск номера документа после символа "№"
     number_start = document.find("№")
@@ -43,3 +45,20 @@ def extract_title(document: str) -> str:
     title = f"{keyword} от {date} {number.strip()}"
 
     return title
+
+
+def truncate_text(text: str, max_length: int) -> str:
+    """
+    Обрезает текст до заданного количества символов, сохраняя целые слова.
+    
+    :param text: Исходный текст
+    :param max_length: Максимальная длина строки
+    :return: Обрезанный текст
+    """
+    if len(text) <= max_length:
+        return text
+    
+    # Обрезаем текст до заданного лимита, не разрывая слова
+    truncated_text = text[:max_length].rsplit(' ', 1)[0]
+    
+    return truncated_text + "..."  # Добавляем многоточие, если текст был обрезан

@@ -46,38 +46,26 @@ async def generate_answer_api(query: Query):
 # Создаем роутер
 document_router = APIRouter()
 
-
 # Модель данных для запроса
 class DocumentInput(BaseModel):
     file_content: str
 
+from langchain.schema import Document  # Исправлено имя класса
 
 # Эндпоинт для добавления документа
 @document_router.post("/add_document")
 async def add_document(doc: DocumentInput):
     try:
-        logger.info("Получен запрос на добавление документа.")
-        
         if not doc.file_content:
             raise HTTPException(status_code=400, detail="Пустой файл")
         
-        # Логирование данных перед вызовом retriever
-        logger.info(f"Содержимое файла: {doc.file_content[:100]}")  # Логируем первые 100 символов
+        # Разделяем содержимое файла на строки и создаём объекты Document
+        acts = doc.file_content.split("\n")[0:10]  # Берём первые 10 строк
+        documents = [Document(page_content=act) for act in acts if act]  # Создаём объекты Document
 
-        # Возможно, функция retriever ожидает другой формат данных. Например, объект Document
-        # Проверим, нужно ли обернуть текст в объект перед отправкой.
-        # acts = [Document(content=doc.file_content)]
-        acts = [doc.file_content]  # Просто передаём строку для отладки
-
-        # Логируем перед добавлением
-        logger.info(f"Перед добавлением в retriever: {acts}")
-
-        # Добавление документа через retriever
-        retriever.add_documents(acts)
-
-        logger.info("Документ успешно добавлен в базу данных.")
+        # Добавление документов через retriever
+        retriever.add_documents(documents)
         return {"message": "Документ успешно добавлен"}
-
+    
     except Exception as e:
-        logger.error(f"Ошибка при добавлении документа: {e}")
         raise HTTPException(status_code=500, detail=f"Ошибка добавления документа: {str(e)}")

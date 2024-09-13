@@ -16,6 +16,7 @@ def make_request(query):
             question=question_3,
             max_tokens=os.getenv("MAX_TOKENS"),
             temperature=os.getenv("TEMPERATURE"),
+            quary=""
         )
         logger.info(f"Запрос переформулирован: {query}")
 
