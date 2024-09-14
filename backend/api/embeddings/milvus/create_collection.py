@@ -15,11 +15,11 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_milvus import Milvus
 from logger import logger
 
-# logger.info('Import HuggingFaceBgeEmbeddings')
-# from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+logger.info('Import HuggingFaceBgeEmbeddings')
+from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 
-logger.info("Import HuggingFaceEmbeddings")
-from langchain_huggingface import HuggingFaceEmbeddings
+# logger.info("Import HuggingFaceEmbeddings")
+# from langchain_community.embeddings import HuggingFaceBgeEmbeddings, HuggingFaceEmbeddings
 
 
 # Укажите директорию для кеша
@@ -31,10 +31,11 @@ model_name = "BAAI/bge-m3"
 model_kwargs = {"device": "cpu"}
 encode_kwargs = {"normalize_embeddings": False}
 cache_folder = cache_dir
-embeddings = HuggingFaceEmbeddings(
+embeddings = HuggingFaceBgeEmbeddings(
     model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs, cache_folder=cache_folder
 )
 logger.info("Embeddings init complete")
+
 
 URI = os.getenv("URI_MILVUS")
 child_chunk_size = 500
